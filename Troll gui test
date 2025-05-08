@@ -1,0 +1,71 @@
+-- Loadstring-compatible
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "FlingGui"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 200, 0, 250)
+Frame.Position = UDim2.new(0, 50, 0.5, -125)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Text = "Fling Tool"
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 24
+
+local PlayerBox = Instance.new("TextBox", Frame)
+PlayerBox.PlaceholderText = "Player Name"
+PlayerBox.Size = UDim2.new(1, -20, 0, 30)
+PlayerBox.Position = UDim2.new(0, 10, 0, 50)
+PlayerBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+PlayerBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerBox.Font = Enum.Font.SourceSans
+PlayerBox.TextSize = 18
+
+local TPButton = Instance.new("TextButton", Frame)
+TPButton.Text = "TP & Fling"
+TPButton.Size = UDim2.new(1, -20, 0, 40)
+TPButton.Position = UDim2.new(0, 10, 0, 90)
+TPButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+TPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TPButton.Font = Enum.Font.SourceSansBold
+TPButton.TextSize = 20
+
+-- Background Sound (roblox requires asset id)
+local Sound = Instance.new("Sound", LocalPlayer:WaitForChild("PlayerGui"))
+Sound.SoundId = "rbxassetid://1843522969" -- A placeholder for the Doom Eternal music (Roblox-compatible)
+Sound.Volume = 1
+Sound.Looped = true
+Sound:Play()
+
+-- Fling & TP Function
+local function flingPlayer(targetName)
+    local target = Players:FindFirstChild(targetName)
+    if not target or not target.Character then return end
+
+    local char = LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+    if root and targetRoot then
+        root.CFrame = targetRoot.CFrame + Vector3.new(0, 3, 0)
+        wait(0.2)
+
+        local bv = Instance.new("BodyVelocity", root)
+        bv.Velocity = Vector3.new(9999, 9999, 9999)
+        bv.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+
+        game:GetService("Debris"):AddItem(bv, 0.2)
+    end
+end
+
+TPButton.MouseButton1Click:Connect(function()
+    local name = PlayerBox.Text
+    flingPlayer(name)
+end)
